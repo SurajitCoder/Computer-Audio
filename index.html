@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="bolt-solid-full.svg">
     <title>BrightXStream | Next-Gen Tech Audio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -104,6 +105,36 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+
+        /* Status Badges */
+        .status-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            z-index: 10;
+        }
+        .status-playing {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+            animation: pulse-soft 2s infinite;
+        }
+        .status-played {
+            background: #64748b;
+            color: white;
+            opacity: 0.9;
+        }
+        @keyframes pulse-soft {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body class="pb-32">
@@ -111,18 +142,21 @@
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.reload()">
+            <!-- Brand -->
+            <div class="flex items-center gap-2 cursor-pointer shrink-0" onclick="window.location.reload()">
                 <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center shadow-lg shadow-teal-200">
                     <i class="fas fa-bolt text-white text-xl"></i>
                 </div>
-                <h1 class="text-2xl font-bold tracking-tight text-gray-800">BrightX<span class="text-teal-600">Stream</span></h1>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight text-gray-800">BrightX<span class="text-teal-600">Stream</span></h1>
             </div>
 
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+            <!-- Navigation Icons -->
+            <nav class="flex items-center gap-4 md:gap-8 text-sm font-medium text-gray-600">
                 <button onclick="toggleLikedList()" class="hover:text-teal-600 flex items-center gap-2 transition-colors">
-                    <i class="far fa-heart"></i> Liked Streams
+                    <i class="far fa-heart text-lg"></i> 
+                    <span class="hidden md:inline">Liked Streams</span>
                 </button>
-                <a href="https://instagram.com" target="_blank" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-teal-50 hover:text-teal-600 transition-all">
+                <a href="https://instagram.com" target="_blank" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-teal-50 hover:text-teal-600 transition-all border border-gray-100 md:border-transparent">
                     <i class="fab fa-instagram text-lg"></i>
                 </a>
             </nav>
@@ -323,7 +357,7 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="p-8">
+            <div class="p-8 text-center">
                 <span id="m-cat" class="text-teal-600 font-bold text-xs uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full mb-3 inline-block">Category</span>
                 <h3 id="m-title" class="text-2xl font-bold text-gray-900 mb-2">Track Title</h3>
                 <p id="m-desc" class="text-gray-500 text-sm leading-relaxed mb-8">This is a high-quality technology focus audio track detailing specific advancements in the field. Perfect for long drives or focused work sessions.</p>
@@ -332,9 +366,6 @@
                     <button onclick="playTrackFromModal()" class="flex-1 bg-teal-600 text-white py-4 rounded-2xl font-bold hover:bg-teal-700 transition-all flex items-center justify-center gap-2">
                         <i class="fas fa-play"></i> Stream Now
                     </button>
-                    <a id="m-pdf" href="#" download class="flex-1 bg-gray-100 text-gray-700 py-4 rounded-2xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-file-pdf"></i> Download PDF
-                    </a>
                 </div>
             </div>
         </div>
@@ -348,20 +379,49 @@
          * MASTER DATA - Scale this easily by adding objects.
          */
         const AUDIO_DATA = [
-            { id: 1, title: "The Rise of Quantum Computing", category: "Hardware", thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", desc: "Detailed breakdown of qubit architecture and future processing power." },
-            { id: 2, title: "Clean Code Principles 2024", category: "Software", thumbnail: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?q=80&w=800&auto=format&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", desc: "How to write maintainable code in a fast-paced environment." },
-            { id: 3, title: "Neural Networks Explained", category: "AI", thumbnail: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=800&auto=format&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", desc: "Understanding weights, biases, and backpropagation foundations." },
-            { id: 4, title: "Mastering React 19 Features", category: "Coding", thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=800&auto=format&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3", desc: "Server Actions and optimized rendering pipelines deep dive." },
-            { id: 5, title: "Cloud Architecture Security", category: "Security", thumbnail: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3", desc: "Zero-trust environments and IAM strategies for modern clouds." },
-            { id: 6, title: "Modern CSS Techniques", category: "Design", thumbnail: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=800&auto=format&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3", desc: "Grid, Subgrid, and container queries implementation." },
-            { id: 7, title: "The Future of VR Hardware", category: "Hardware", thumbnail: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=800&auto=format&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3", desc: "Optics and haptic feedback evolution in virtual reality." },
-            { id: 8, title: "Edge Computing Basics", category: "Software", thumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc51?q=80&w=800&auto=format&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3", desc: "Reducing latency with decentralized server architectures." }
+            { id: 1, 
+                title: "Alan Turing (1912–1954): Founder of Computer Science and AI", 
+                category: "Alan Turing", 
+                thumbnail: "Alan Turing (1912–1954).jpg", 
+                url: "", 
+                desc: "Alan Mathison Turing was a British mathematician, computer scientist, logician, cryptanalyst, philosopher, and theoretical biologist." 
+            },
+            { id: 2, 
+                title: "Alan Turing's Critical Impact on World War II", 
+                category: "Alan Turing", 
+                thumbnail: "Alan Turing's Critical Impact on World War II.jpg", 
+                url: "", 
+                desc: "Alan Turing's work as a cryptanalyst at Bletchley Park during World War II was instrumental in the Allied victory, providing vital intelligence that significantly altered the course of the conflict." 
+            },
+            { id: 3, 
+                title: "AI and Space Exploration: How Machines Discover the Universe", 
+                category: "AI", 
+                thumbnail: "AI and Space Exploration.jpg", 
+                url: "", 
+                desc: "Artificial Intelligence (AI) and Machine Learning (ML) are critical enablers for modern space exploration, overcoming limitations related to distance, data volume, and the need for autonomy in remote environments." 
+            },
+            { id: 4, 
+                title: "AI in Everyday Apps: The Technology Behind Voice Assistants and Smart Filters", 
+                category: "AI", 
+                thumbnail: "AI in Everyday Apps The technology behind voice assistants and smart filters.jpg", 
+                url: "", 
+                desc: "Artificial Intelligence (AI) is no longer confined to laboratories; it is the invisible engine powering the most frequently used features in modern mobile and desktop applications." 
+            },
+            { id: 5, 
+                title: "AI in Healthcare: Transforming Medicine", 
+                category: "AI", 
+                thumbnail: "AI in Healthcare.jpg", 
+                url: "", 
+                desc: "Artificial Intelligence (AI) is rapidly revolutionizing healthcare by providing tools that enhance accuracy, accelerate research, and improve patient care pathways." 
+            },
+
         ];
 
         let currentTrackId = null;
         let isPlaying = false;
         let likedTracks = [];
         let history = [];
+        let playedTrackIds = new Set(); // Stores IDs of tracks already played in this session
         let lastSurpriseTime = 0;
 
         // Elements
@@ -411,33 +471,44 @@
 
         function renderAudioGrid(data) {
             const grid = document.getElementById('audioGrid');
-            grid.innerHTML = data.map(track => `
-                <div class="neon-card bg-white rounded-[2rem] p-4 group relative cursor-pointer" onclick="handleCardClick(event, ${track.id})">
-                    <div class="relative h-48 mb-4 overflow-hidden rounded-2xl">
-                        <img src="${track.thumbnail}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <i class="fas fa-play text-white text-3xl"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-teal-600 uppercase tracking-tighter mb-1 block">${track.category}</span>
-                        <h4 class="font-bold text-gray-800 mb-4 line-clamp-1">${track.title}</h4>
-                        <div class="flex items-center justify-between">
-                            <div class="flex gap-3">
-                                <button onclick="toggleLike(event, ${track.id})" class="text-gray-300 hover:text-red-500 transition-colors">
-                                    <i class="${likedTracks.includes(track.id) ? 'fas text-red-500' : 'far'} fa-heart"></i>
-                                </button>
-                                <button onclick="openDetails(${track.id})" class="text-gray-300 hover:text-teal-600 transition-colors">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                            </div>
-                            <div class="w-8 h-8 rounded-full border border-teal-100 flex items-center justify-center text-teal-600 hover:bg-teal-600 hover:text-white transition-all">
-                                <i class="fas fa-play text-[10px]"></i>
+            grid.innerHTML = data.map(track => {
+                // Determine status badge
+                let statusHtml = '';
+                if (track.id === currentTrackId && isPlaying) {
+                    statusHtml = `<div class="status-badge status-playing"><i class="fas fa-circle text-[6px] mr-1"></i> LIVE</div>`;
+                } else if (playedTrackIds.has(track.id)) {
+                    statusHtml = `<div class="status-badge status-played">PLAYED</div>`;
+                }
+
+                return `
+                    <div class="neon-card bg-white rounded-[2rem] p-4 group relative cursor-pointer" onclick="handleCardClick(event, ${track.id})">
+                        ${statusHtml}
+                        <div class="relative h-48 mb-4 overflow-hidden rounded-2xl">
+                            <img src="${track.thumbnail}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <i class="fas fa-play text-white text-3xl"></i>
                             </div>
                         </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-teal-600 uppercase tracking-tighter mb-1 block">${track.category}</span>
+                            <h4 class="font-bold text-gray-800 mb-4 line-clamp-1">${track.title}</h4>
+                            <div class="flex items-center justify-between">
+                                <div class="flex gap-3">
+                                    <button onclick="toggleLike(event, ${track.id})" class="text-gray-300 hover:text-red-500 transition-colors">
+                                        <i class="${likedTracks.includes(track.id) ? 'fas text-red-500' : 'far'} fa-heart"></i>
+                                    </button>
+                                    <button onclick="openDetails(${track.id})" class="text-gray-300 hover:text-teal-600 transition-colors">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </div>
+                                <div class="w-8 h-8 rounded-full border border-teal-100 flex items-center justify-center text-teal-600 hover:bg-teal-600 hover:text-white transition-all">
+                                    <i class="fas fa-play text-[10px]"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function handleCardClick(e, id) {
@@ -449,6 +520,9 @@
             const track = AUDIO_DATA.find(t => t.id === id);
             if (!track) return;
 
+            // Mark as played
+            playedTrackIds.add(id);
+            
             // Update UI State first
             currentTrackId = id;
             
@@ -481,6 +555,8 @@
                     isPlaying = true;
                     updatePlayIcons(true);
                     addToHistory(track);
+                    // Refresh grid to show LIVE badge
+                    refreshCurrentGrid();
                 }
             } catch (error) {
                 if (error.name === 'AbortError') {
@@ -501,6 +577,17 @@
                     isPlaying = true;
                     updatePlayIcons(true);
                 }).catch(e => console.log('Interrupted: ', e));
+            }
+            refreshCurrentGrid();
+        }
+
+        function refreshCurrentGrid() {
+            // Check if we are in a search state or just default
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (query) {
+                handleSearch();
+            } else {
+                renderAudioGrid(AUDIO_DATA);
             }
         }
 
@@ -528,6 +615,7 @@
                 }
             }, 500);
             isPlaying = false;
+            refreshCurrentGrid();
         }
 
         function toggleFullscreen(show) {
@@ -641,6 +729,7 @@
                 <div onclick="playTrack(${h.id})" class="recent-play-anim cursor-pointer group">
                     <div class="relative overflow-hidden rounded-xl mb-2 h-32">
                         <img src="${h.thumbnail}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                        ${h.id === currentTrackId && isPlaying ? '<div class="absolute inset-0 bg-teal-600/40 flex items-center justify-center"><i class="fas fa-volume-up text-white animate-pulse"></i></div>' : ''}
                     </div>
                     <p class="text-[10px] font-bold text-gray-400 truncate">${h.title}</p>
                 </div>
@@ -655,13 +744,7 @@
                 likedTracks.push(id);
             }
             updateLikeIcon(id);
-            
-            const currentSearch = document.getElementById('searchInput').value.toLowerCase();
-            if (currentSearch) {
-                handleSearch();
-            } else {
-                renderAudioGrid(AUDIO_DATA);
-            }
+            refreshCurrentGrid();
         }
 
         function updateLikeIcon(id) {
@@ -685,10 +768,6 @@
             document.getElementById('m-title').innerText = track.title;
             document.getElementById('m-cat').innerText = track.category;
             document.getElementById('m-desc').innerText = track.desc;
-            document.getElementById('m-pdf').onclick = (e) => {
-                e.preventDefault();
-                console.log("PDF download simulation.");
-            };
             
             currentTrackId = id;
             document.getElementById('detailModal').classList.remove('hidden');
@@ -706,7 +785,11 @@
 
         function toggleLikedList() {
             if (likedTracks.length === 0) {
-                alert("No liked streams yet!");
+                const messageEl = document.createElement('div');
+                messageEl.className = 'fixed top-24 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-xl z-[100] animate-slide-up';
+                messageEl.innerText = "No liked streams yet!";
+                document.body.appendChild(messageEl);
+                setTimeout(() => messageEl.remove(), 2000);
                 return;
             }
             const likedData = AUDIO_DATA.filter(t => likedTracks.includes(t.id));
